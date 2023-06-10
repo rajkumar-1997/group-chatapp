@@ -2,7 +2,7 @@ const User=require('../models/user');
 const bcrypt=require('bcrypt');
 const {Op}=require('sequelize');
 
-
+const saltRounds=10;
 function isNotValid(str){
     if(str.length==0 || str==undefined){
         return true;
@@ -23,6 +23,15 @@ exports.signUp= async (req,res,next)=>{
               [ Op.or]:[ {email:email,},{mobilenumber:mobilenumber}]
                 }
           })
+
+          if(users.length==1){
+           throw {type:'error',message:'User Already Exists Please Login!'}
+          }
+          else{
+            const hash= await bcrypt.hash(password,saltRounds);
+            await User.create({name,email,mobilenumber,password:hash});
+            res.status(200).send({type:'success',message:'User Created Successfully'})
+          }
             
           } catch (error) {
             console.log(error);
