@@ -8,10 +8,11 @@ body{
     /* flex-direction: column; */
     margin: 0;
    
- 
-    background: #833ab4;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #fcb045, #fd1d1d, #833ab4);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #fcb045, #fd1d1d, #833ab4); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #cc2b5e;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #753a88, #cc2b5e);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #753a88, #cc2b5e); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    
+   font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; 
     
     
 
@@ -47,6 +48,7 @@ body{
     align-items: center;
     flex-direction: column;
     gap: 0.5rem;
+    color: #fff;
   
 }
 
@@ -63,16 +65,20 @@ body{
 
 .form-box{
    
-  background-color:  #74e4f0;
+  background-color: transparent;
 
   padding: 1rem 1.5rem;
  
   border-radius: 1rem;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+  backdrop-filter: blur(30px);
+  backdrop-filter: invert(6%);
+ 
  
 }
 .form-box h3{
     text-align: center; 
+  
 }
 
 form{
@@ -98,12 +104,30 @@ form{
     width: 100%;
     outline: none;
     padding: 0.5rem;
-    color: #fff;
+    color:black;
     text-overflow: inherit;
-    border: 1px solid #eb099c;
+    border: 1px solid #09b6eb;
     border-radius: 0.2rem;
     background: transparent;
     font-size: 0.9rem;
+    color: #cdcdfd;
+}
+::placeholder {
+        
+    /* Firefox, Chrome, Opera */
+    color: rgb(7, 185, 234);
+}
+  
+:-ms-input-placeholder {
+    
+    /* Internet Explorer 10-11 */
+    color: rgb(7, 185, 234);
+}
+  
+::-ms-input-placeholder {
+    
+    /* Microsoft Edge */
+    color: rgb(7, 185, 234);
 }
 .login-form-btn{
     padding:0.5rem 6.8rem ;
@@ -117,6 +141,7 @@ form{
     border-radius: 0.2rem;
     font-size: 1rem;
     transition: var(--transition);
+    cursor: pointer;
 }
 
 .login-form-btn:hover{
@@ -137,6 +162,7 @@ hr{
    margin-top: 1.1rem;
    display: flex;
    justify-content: space-around;
+   
 }
 
 .login-div p a{
@@ -153,6 +179,7 @@ hr{
     border-radius: 0.2rem;
     font-size: 1rem;
     transition: var(--transition);
+    cursor: pointer;
 }
 
 .signup-form-btn:hover{
@@ -165,6 +192,7 @@ hr{
     margin-top: 1.5rem;
     display: flex;
     justify-content: space-around;
+   
  }
  
  .signup-div p a{
