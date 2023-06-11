@@ -15,7 +15,7 @@ form.addEventListener('submit',async(e)=>{
         if(response.status==200){
             localStorage.setItem("sessionToken",response.data.sessionToken);
             notify(response.data);
-            // window.location.href='../user/signup';
+            window.location.href='../chat/chat';
          
         }
         else{
