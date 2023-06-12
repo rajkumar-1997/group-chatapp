@@ -26,7 +26,7 @@
     /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #753a88, #cc2b5e);
     /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #753a88, #cc2b5e);
+    background: linear-gradient(to right, #6f8f73, #578b91);
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     font-family: Helvetica, sans-serif;
   }
@@ -59,7 +59,7 @@
   }
   
   .group header form input {
-    width: 5rem;
+    width: 80%;
   }
   
   .group-name {

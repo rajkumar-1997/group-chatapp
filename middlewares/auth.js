@@ -1,18 +1,17 @@
-const jwt=require('jwt');
-const User=require('../models/user');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 require('dotenv').config();
 
-exports.authenticate=async(req,res,next)=>{
-    const token=req.headers("Authorization");
-    try {
-        const {userId}=jwt.verify(token,process.env.JWT_SECRET_KEY);
-        User.findByPk(userId).then((user)=>{
-            req.user=user;
-            next();
-        })
-    } catch (error) {
-        res.status(401).send({ type: "error", message: "Authorized Failed!" });
-    }
+exports.authenticate = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization;
 
-}
+    const { userId } = await jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const user = await User.findByPk(userId);
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(401).send({ type: "error", message: "Authorization Failed!" });
+  }
+};
