@@ -26,7 +26,7 @@ exports.getGroup= async(req,res,next)=>{
       const groupId=req.params.groupId;
       group=await  Group.findByPk(groupId);
       allUsers= await group.getUsers();
-     const  msgs= await group.getMessages();
+     let  msgs= await group.getMessages();
      res.status(200).send({msgs:msgs,users:allUsers,user:req.user.name})
     } catch (error) {
       console.log(error);
@@ -38,7 +38,8 @@ exports.getGroup= async(req,res,next)=>{
 
 exports.getAllGroup= async(req,res,next)=>{
     try {
-      const groups=req.user.getGroups();
+      const groups= await req.user.getGroups();
+      // console.log(groups);
       res.status(200).send(groups);
     } catch (error) {
       console.log(error);

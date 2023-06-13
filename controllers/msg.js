@@ -9,13 +9,13 @@ exports.postMsg= async(req,res,next)=>{
        const group=await Group.findByPk(groupId);
      const message=await group.createMessage({
         message:req.body.msg,
-        sender:req.body.name,
+        sender:req.user.name,
        });
 
        res.status(200).send(message);
     } catch (error) {
-        console.log(err);
-      res.status(500).send(err);
+        console.log(error);
+      res.status(500).send(error);
     }
   
 }
@@ -33,8 +33,8 @@ exports.getMsg=async(req,res,next)=>{
         });
         res.status(200).send({msgs:msgs,user:req.user.name});
     } catch (error) {
-        console.log(err);
-        res.status(500).send(err);
+        console.log(error);
+        res.status(500).send(error);
     }
  
 
