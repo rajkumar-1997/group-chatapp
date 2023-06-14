@@ -13,7 +13,10 @@ const groupSection=document.getElementById('group-section');
 const msgSection = document.getElementById("msg-section");
 const backbtn=document.getElementById('back-btn');
 const logoutBtn=document.getElementById('logout');
-
+const sessionToken=localStorage.getItem('sessionToken');
+if(!sessionToken){
+  document.querySelector('body').innerHTML = "<h1 style=text-align:center;color:red; >Login First<h1>"
+}
 
 logoutBtn.addEventListener('click',()=>{
     localStorage.removeItem('sessionToken')
@@ -49,6 +52,52 @@ try {
 
 }
 
+
+function loadMessageLocal() {
+  setInterval(() => {
+    const msgs = JSON.parse(localStorage.getItem("msgs"));
+    if (msgs === null) {
+      loadMessage(0);
+    } else {
+      loadMessage(msgs[msgs.length - 1].id);
+    }
+  }, 1000);
+}
+
+function loadMessage(lastMsg) {
+  const token = localStorage.getItem("sessionToken");
+  axios
+    .get(`http://localhost:3000/msg/get?lastMsg=${lastMsg}`, {
+      headers: {
+        Authorization: token,
+      },
+    })
+    .then((response) => {
+      chat.innerText = "";
+      const msgs = JSON.parse(localStorage.getItem("msgs"));
+      let newMsg;
+      if (msgs === null) {
+        newMsg = response.data.msgs;
+      } else {
+        newMsg = [...msgs, ...response.data.msgs];
+      }
+      localStorage.setItem("msgs", JSON.stringify(newMsg));
+      newMsg.forEach((msg) => {
+        if (msg.sender === response.data.user) {
+          showMsg(msg, "You", "right-msg");
+        } else {
+          showMsg(msg, msg.sender, "left-msg");
+        }
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      notify(err.response.data);
+    });
+}
+
+loadMessageLocal();
+
 msgForm.addEventListener('submit',async(e)=>{
     e.preventDefault();
     const token=localStorage.getItem('sessionToken');
@@ -76,6 +125,7 @@ msgForm.addEventListener('submit',async(e)=>{
         console.log(error);
         notify(error.response.data);
     }
+    e.target.msg.value="";
 })
 
 
@@ -138,7 +188,7 @@ group.addEventListener('click',async(e)=>{
             response.data.users.forEach((user)=>{
                 showUser(user.name);
             })
-            // localStorage.setItem('msgs',JSON.stringify(msg));
+            localStorage.setItem('msgs',JSON.stringify(response.data.msgs));
             response.data.msgs.forEach((msg)=>{
                 if(msg.sender==response.data.user){
                     showMsg(msg,"You","right-msg");
