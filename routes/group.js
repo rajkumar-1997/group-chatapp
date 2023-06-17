@@ -9,6 +9,7 @@ router.post('/create',middlewareController.authenticate,groupController.postGrou
 router.post('/add-user/:groupId',middlewareController.authenticate,groupController.addUser);
 router.get('/get/:groupId',middlewareController.authenticate,groupController.getGroup);
 router.get('/get',middlewareController.authenticate,groupController.getAllGroup);
+router.delete('/delete/:groupId',middlewareController.authenticate,groupController.deleteGroup);
 
 
 module.exports=router;

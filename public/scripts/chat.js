@@ -1,5 +1,7 @@
 
 
+
+
 const chat=document.getElementById('chat');
 const group=document.getElementById('group');
 const users=document.getElementById('users');
@@ -24,50 +26,25 @@ logoutBtn.addEventListener('click',()=>{
 })
 backbtn.addEventListener('click',loadGroup);
 
-window.addEventListener('DOMContentLoaded',loadGroup);
-async function loadGroup(){
-const token=localStorage.getItem('sessionToken');
-try {
-   const response=await axios.get('http://localhost:3000/group/get',{
-    headers:{
-        authorization:token,
-    }
-   })
-   group.innerText="";
-   msgSection.style.display='none';
-   groupSection.style.display='block';
-   userSection.style.display='none';
-   console.log(response.data);
-   response.data.forEach((group) => {
-    showGroup(group.name, group.id);
-  });
-
-} catch (error) {
-    console.log(error);
-    notify(error.response.data); 
-}
-
-
-
-
-}
 
 
 function loadMessageLocal() {
   setInterval(() => {
     const msgs = JSON.parse(localStorage.getItem("msgs"));
-    if (msgs === null) {
-      loadMessage(0);
+    const groupId = JSON.parse(localStorage.getItem("groupId"));
+    if (msgs.length==0) {
+      loadMessage(groupId,0);
     } else {
-      loadMessage(msgs[msgs.length - 1].id);
+      loadMessage(groupId,msgs[msgs.length - 1].id);
     }
-  }, 1000);
+  }, 100);
 }
 
-function loadMessage(lastMsg) {
+function loadMessage(groupId,lastMsg) {
+  console.log(groupId);
   const token = localStorage.getItem("sessionToken");
   axios
-    .get(`http://localhost:3000/msg/get?lastMsg=${lastMsg}`, {
+    .get(`http://localhost:3000/msg/get?groupId=${groupId}&lastMsg=${lastMsg}`, {
       headers: {
         Authorization: token,
       },
@@ -76,7 +53,7 @@ function loadMessage(lastMsg) {
       chat.innerText = "";
       const msgs = JSON.parse(localStorage.getItem("msgs"));
       let newMsg;
-      if (msgs === null) {
+      if (msgs.length == 0 ) {
         newMsg = response.data.msgs;
       } else {
         newMsg = [...msgs, ...response.data.msgs];
@@ -95,8 +72,8 @@ function loadMessage(lastMsg) {
       notify(err.response.data);
     });
 }
-
 loadMessageLocal();
+
 
 msgForm.addEventListener('submit',async(e)=>{
     e.preventDefault();
@@ -166,7 +143,7 @@ groupForm.addEventListener('submit',async(e)=>{
 });
 
 function showGroup (groupName,groupId){
-    const textNode = `<div class="group-name" id="${groupId}" >${groupName}</div>`;
+    const textNode = `<div class="group-name" id="${groupId}"  style="display:flex;justify-content:space-between;"><span>${groupName}</span> <span> <i class="fa-solid fa-trash" style="color: #c5280d;" onClick=deleteGroup(${groupId})></i></span></div>`;
     group.innerHTML += textNode;
 }
 
@@ -174,6 +151,8 @@ group.addEventListener('click',async(e)=>{
     try {
         if(e.target.classList.contains('group-name')){
           const token=localStorage.getItem('sessionToken');
+          const groupId = e.target.id;
+          localStorage.setItem("groupId", groupId); 
           const response= await axios.get(`http://localhost:3000/group/get/${e.target.id}`,{
             headers:{
                 authorization:token,
@@ -185,18 +164,20 @@ group.addEventListener('click',async(e)=>{
             groupSection.style.display='none';
             userSection.style.display='block';
             msgSection.style.display='flex';
+          
             response.data.users.forEach((user)=>{
                 showUser(user.name);
             })
             localStorage.setItem('msgs',JSON.stringify(response.data.msgs));
-            response.data.msgs.forEach((msg)=>{
-                if(msg.sender==response.data.user){
-                    showMsg(msg,"You","right-msg");
-                }
-                else{
-                    showMsg(msg, msg.sender, "left-msg"); 
-                }
-            })
+            // response.data.msgs.forEach((msg)=>{
+            //     if(msg.sender==response.data.user){
+            //         showMsg(msg,"You","right-msg");
+            //     }
+            //     else{
+            //         showMsg(msg, msg.sender, "left-msg"); 
+            //     }
+            // })
+        
 
           }
           else{
@@ -205,12 +186,14 @@ group.addEventListener('click',async(e)=>{
 
 
         } 
+       
     } catch (error) {
         console.log(error);
-        // notify(error.response.data);
+        notify(error.response.data);
     }
    
 })
+
 function showMsg(msg,user,side){
     console.log(msg);
     const options={
@@ -237,6 +220,7 @@ function showMsg(msg,user,side){
 function showUser(user){
     const textNode=`<div  class='group-name'>${user}</div>`;
     users.innerHTML+=textNode;
+    
 }
 
 userForm.addEventListener('submit',async (e)=>{
@@ -256,6 +240,9 @@ userForm.addEventListener('submit',async (e)=>{
      if(response.status==200){
         notify(response.data);
         showUser(response.data.user);
+
+       
+     
         
      }
      else{
@@ -267,4 +254,57 @@ userForm.addEventListener('submit',async (e)=>{
         console.log(error);
         notify(error.response.data);
     }
+    e.target.user.value="";
 })
+window.addEventListener('DOMContentLoaded',loadGroup);
+async function loadGroup(){
+const token=localStorage.getItem('sessionToken');
+try {
+   const response=await axios.get('http://localhost:3000/group/get',{
+    headers:{
+        authorization:token,
+    }
+   })
+   group.innerText="";
+   
+   msgSection.style.display='none';
+   groupSection.style.display='block';
+   userSection.style.display='none';
+   console.log(response.data);
+   response.data.forEach((group) => {
+    showGroup(group.name, group.id);
+  });
+ 
+
+} catch (error) {
+    console.log(error);
+    notify(error.response.data); 
+}
+
+
+}
+
+async function deleteGroup(groupId){
+  const token=localStorage.getItem('sessionToken');
+  console.log(groupId);
+  try {
+    const response=await axios.delete(`http://localhost:3000/group/delete/${groupId}`,{
+      headers:{
+          authorization:token,
+      }
+     })
+
+     if(response.status==200){
+      notify(response.data);
+     
+
+     }
+     else{
+      throw {response:response};
+     }
+  } catch (error) {
+    console.log(error);
+    notify(error.response.data); 
+  }
+  loadGroup();
+}
