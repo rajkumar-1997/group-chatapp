@@ -44,7 +44,7 @@ exports.postForgotPassword = async (req, res, next) => {
     });
 
     const sender = {
-      email: 'rajkumarjangam@gmail.com',
+      email: 'rajkumarjangam66@gmail.com',
       name: 'ChatHolic',
     };
 
